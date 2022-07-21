@@ -34,10 +34,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 Log.d("RESPONSE", response.toString());
-
                 try {
-                    String date = response.getString("positive");
-                    textView.setText(date);
+                    Case aCase = new Case(response);
+
+                    Log.d("RESPONSE", aCase.toString());
+
+                    textView.setText(aCase.getDate());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
