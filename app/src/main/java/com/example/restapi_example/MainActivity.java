@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -25,34 +28,44 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         TextView textView = findViewById(R.id.txtVw);
+        EditText edTxt_date = findViewById(R.id.edTxt_date);
+        Button button = findViewById(R.id.button);
 
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
 
-        final String URL = "https://api.covidtracking.com/v1/us/20200601.json";
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(JSONObject response) {
-                Log.d("RESPONSE", response.toString());
-                try {
-                    Case aCase = new Case(response);
+            public void onClick(View view) {
+                String strDate = edTxt_date.getText().toString();
 
-                    Log.d("RESPONSE", aCase.toString());
+                String URL = "https://api.covidtracking.com/v1/us/"+strDate+".json";
 
-                    textView.setText(aCase.getDate());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("RESPONSE", response.toString());
+                        try {
+                            Case aCase = new Case(response);
 
+                            Log.d("RESPONSE", aCase.toString());
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("RESPONSE", error.getMessage());
+                            textView.setText(aCase.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("RESPONSE", error.getMessage());
+                    }
+                });
+
+                queue.add(request);
             }
         });
 
-        queue.add(request);
+
     }
 }
